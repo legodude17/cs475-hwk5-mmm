@@ -57,6 +57,22 @@ void mmm_reset(double **matrix)
 }
 
 /**
+ * Reset a given matrix to random values between 0 and 99 (their size is in the global var)
+ * @param matrix pointer to a 2D array
+ */
+void mmm_reset_rand(double **matrix)
+{
+	srand((unsigned)time(NULL)); // seed the random number generator
+	for (int i = 0; i < size; i++)
+	{
+		for (int j = 0; j < size; j++)
+		{
+			matrix[i][j] = (double)(rand() % 100);
+		}
+	}
+}
+
+/**
  * Free up memory allocated to all matrices
  * (their size is in the global var)
  */

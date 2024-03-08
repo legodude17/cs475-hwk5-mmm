@@ -71,10 +71,11 @@ int main(int argc, char *argv[])
 	double seqTimes[3] = {0};
 	double parTimes[3] = {0};
 	double clockstart, clockend;
-	double error = 0;
 
 	for (int i = 0; i < 4; i++)
 	{
+		mmm_reset_rand(A);
+		mmm_reset_rand(B);
 		clockstart = rtclock(); // start the clock
 
 		mmm_seq();
@@ -112,16 +113,14 @@ int main(int argc, char *argv[])
 			pthread_join(threads[j], NULL);
 		}
 
+		free(args);
+		free(threads);
+
 		clockend = rtclock(); // stop the clock
 
 		// printf("Parallel run %d took %f seconds\n", i, clockend - clockstart);
 		if (i > 0)
 			parTimes[i - 1] = clockend - clockstart;
-
-		double newError = mmm_verify();
-
-		if (newError > error)
-			error = newError;
 	}
 
 	printf("========\nmode: %s\nthread count: %d\nsize: %d\n========\n", mode == SEQ ? "sequential" : "parallel", num_threads, size);
@@ -134,7 +133,8 @@ int main(int argc, char *argv[])
 		double parTime = (parTimes[0] + parTimes[1] + parTimes[2]) / 3;
 		printf("Parallel Time (avg of 3 runs): %f sec\n", parTime);
 		printf("Speedup: %f\n", seqTime / parTime);
-		printf("Verifying... largest error between parallel and sequential matrix: %f\n", error);
+		printf("Verifying...");
+		printf("largest error between parallel and sequential matrix: %f\n", mmm_verify());
 	}
 
 	mmm_freeup();
