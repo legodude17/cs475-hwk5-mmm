@@ -90,7 +90,7 @@ void mmm_freeup()
 		free(PAR_MATRIX[i]);
 		PAR_MATRIX[i] = NULL;
 	}
-	// free original array
+	// free original arrays
 	free(A);
 	A = NULL;
 	free(B);
@@ -112,6 +112,7 @@ void mmm_seq()
 		{
 			for (int k = 0; k < size; k++)
 			{
+				// We know it starts at 0
 				SEQ_MATRIX[i][j] += A[i][k] * B[k][i];
 			}
 		}
@@ -123,14 +124,16 @@ void mmm_seq()
  */
 void *mmm_par(void *args)
 {
-	thread_args *params = (thread_args *)args;
+	thread_args *params = (thread_args *)args; // Get the params from args
 
+	// Only run on the columns specified
 	for (int i = params->begin; i < params->end; i++)
 	{
 		for (int j = 0; j < size; j++)
 		{
 			for (int k = 0; k < size; k++)
 			{
+				// We know it starts at 0
 				PAR_MATRIX[i][j] += A[i][k] * B[k][i];
 			}
 		}
@@ -154,6 +157,7 @@ double mmm_verify()
 		for (int j = 0; j < size; j++)
 		{
 			double newError = fabs(SEQ_MATRIX[i][j] - PAR_MATRIX[i][j]);
+			// Finding the maximum error, so replace if larger
 			if (newError > error)
 				error = newError;
 		}
